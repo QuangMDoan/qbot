@@ -88,8 +88,8 @@ void opcontrol() {
 		pros::lcd::print(1, "power: %d, turn: %d", power, turn); 
 
 		// Sets left, right motor voltage
-		left_mg.move(power - turn); 
-		right_mg.move(power + turn);                     
+		left_mg.move(power + turn); 
+		right_mg.move(power - turn);                     
 		
 		pros::lcd::print(2, "left.motor volt: %d", power - turn); 
 		pros::lcd::print(3, "right.motor volt: %d", power + turn); 
