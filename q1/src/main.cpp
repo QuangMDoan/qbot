@@ -1,19 +1,20 @@
 #include "main.h"
 #include "constants.h"
+#include "pros/screen.h"
+#include "pros/screen.hpp"
 
 /**
- * A callback function for LLEMU's center button.
+ * A callback function for screen touch.
  *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
+ * When this callback is fired, it will toggle text on the screen.
  */
-void on_center_button() {
+void on_center_button(int16_t x, int16_t y) {
 	static bool pressed = false;
 	pressed = !pressed;
 	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
+		pros::screen::print(pros::E_TEXT_MEDIUM, 10, 70, "ahhh!");
 	} else {
-		pros::lcd::clear_line(2);
+		pros::screen::print(pros::E_TEXT_MEDIUM, 10, 70, "");
 	}
 }
 
@@ -24,10 +25,7 @@ void on_center_button() {
  * to keep execution time for this mode under a few seconds.
  */
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+	pros::screen::erase();
 }
 
 /**
@@ -81,18 +79,21 @@ void opcontrol() {
 
 	while (true) {
 		// Gets amount forward/backward from left joystick
-		int power = master.get_analog(ANALOG_LEFT_Y);    
+		int power = master.get_analog(ANALOG_LEFT_Y) /2 ;    
 
 		// Gets the steering amount from right joystick
-		int turn = master.get_analog(ANALOG_RIGHT_X);  
-		pros::lcd::print(1, "power: %d, turn: %d", power, turn); 
+		int turn = master.get_analog(ANALOG_RIGHT_X) /2 ;  
+		pros::screen::print(pros::E_TEXT_LARGE, 10, 10, "power: %d, turn: %d", power, turn); 
 
-		// Sets left, right motor voltage
-		left_mg.move(power + turn); 
-		right_mg.move(power - turn);                     
+		int leftVolage = power + turn;
+		int rightVolage = power - turn;
+
+		left_mg.move(leftVolage); 
+		right_mg.move(rightVolage);                     
 		
-		pros::lcd::print(2, "left.motor volt: %d", power - turn); 
-		pros::lcd::print(3, "right.motor volt: %d", power + turn); 
-		pros::delay(20);                               
+		pros::screen::print(pros::E_TEXT_LARGE, 10, 40, "left.motor volt: %d", leftVolage); 
+		pros::screen::print(pros::E_TEXT_LARGE, 10, 70, "right.motor volt: %d", rightVolage); 
+		pros::delay(20);      
+		pros::screen::erase();		                         
 	}
 }
