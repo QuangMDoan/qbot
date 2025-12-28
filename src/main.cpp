@@ -1,38 +1,14 @@
 #include "main.h"
 
-/////
-// For installation, upgrading, documentations, and tutorials, check out our website!
-// https://ez-robotics.github.io/EZ-Template/
-/////
+ez::Drive chassis(    
+    {19, 20},  
+    {-11, -12 },  // Right Chassis Ports (negative port will reverse it!)
 
-// Chassis constructor
-ez::Drive chassis(
-    // These are your drive motors, the first motor is used for sensing!
-    {1, 2, 3},     // Left Chassis Ports (negative port will reverse it!)
-    {-4, -5, -6},  // Right Chassis Ports (negative port will reverse it!)
-
-    7,      // IMU Port
+    18,      // IMU Port
     4.125,  // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
-    343);   // Wheel RPM = cartridge * (motor gear / wheel gear)
+    200);   // Wheel RPM = cartridge * (motor gear / wheel gear)
 
-// Uncomment the trackers you're using here!
-// - `8` and `9` are smart ports (making these negative will reverse the sensor)
-//  - you should get positive values on the encoders going FORWARD and RIGHT
-// - `2.75` is the wheel diameter
-// - `4.0` is the distance from the center of the wheel to the center of the robot
-// ez::tracking_wheel horiz_tracker(8, 2.75, 4.0);  // This tracking wheel is perpendicular to the drive wheels
-// ez::tracking_wheel vert_tracker(9, 2.75, 4.0);   // This tracking wheel is parallel to the drive wheels
-
-/**
- * Runs initialization code. This occurs as soon as the program is started.
- *
- * All other competition modes are blocked by initialize; it is recommended
- * to keep execution time for this mode under a few seconds.
- */
 void initialize() {
-  // Print our branding over your terminal :D
-  ez::ez_template_print();
-
   pros::delay(500);  // Stop the user from doing anything while legacy ports configure
 
   // Look at your horizontal tracking wheel and decide if it's in front of the midline of your robot or behind it
@@ -57,26 +33,26 @@ void initialize() {
   // chassis.opcontrol_curve_buttons_right_set(pros::E_CONTROLLER_DIGITAL_Y, pros::E_CONTROLLER_DIGITAL_A);
 
   // Autonomous Selector using LLEMU
-  ez::as::auton_selector.autons_add({
-      {"Drive\n\nDrive forward and come back", drive_example},
-      {"Turn\n\nTurn 3 times.", turn_example},
-      {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
-      {"Drive and Turn\n\nSlow down during drive", wait_until_change_speed},
-      {"Swing Turn\n\nSwing in an 'S' curve", swing_example},
-      {"Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining},
-      {"Combine all 3 movements", combining_movements},
-      {"Interference\n\nAfter driving forward, robot performs differently if interfered or not", interfered_example},
-      {"Simple Odom\n\nThis is the same as the drive example, but it uses odom instead!", odom_drive_example},
-      {"Pure Pursuit\n\nGo to (0, 30) and pass through (6, 10) on the way.  Come back to (0, 0)", odom_pure_pursuit_example},
-      {"Pure Pursuit Wait Until\n\nGo to (24, 24) but start running an intake once the robot passes (12, 24)", odom_pure_pursuit_wait_until_example},
-      {"Boomerang\n\nGo to (0, 24, 45) then come back to (0, 0, 0)", odom_boomerang_example},
-      {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
-      {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
-  });
+  // ez::as::auton_selector.autons_add({
+  //     {"Drive\n\nDrive forward and come back", drive_example},
+  //     {"Turn\n\nTurn 3 times.", turn_example},
+  //     {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
+  //     {"Drive and Turn\n\nSlow down during drive", wait_until_change_speed},
+  //     {"Swing Turn\n\nSwing in an 'S' curve", swing_example},
+  //     {"Motion Chaining\n\nDrive forward, turn, and come back, but blend everything together :D", motion_chaining},
+  //     {"Combine all 3 movements", combining_movements},
+  //     {"Interference\n\nAfter driving forward, robot performs differently if interfered or not", interfered_example},
+  //     {"Simple Odom\n\nThis is the same as the drive example, but it uses odom instead!", odom_drive_example},
+  //     {"Pure Pursuit\n\nGo to (0, 30) and pass through (6, 10) on the way.  Come back to (0, 0)", odom_pure_pursuit_example},
+  //     {"Pure Pursuit Wait Until\n\nGo to (24, 24) but start running an intake once the robot passes (12, 24)", odom_pure_pursuit_wait_until_example},
+  //     {"Boomerang\n\nGo to (0, 24, 45) then come back to (0, 0, 0)", odom_boomerang_example},
+  //     {"Boomerang Pure Pursuit\n\nGo to (0, 24, 45) on the way to (24, 24) then come back to (0, 0, 0)", odom_boomerang_injected_pure_pursuit_example},
+  //     {"Measure Offsets\n\nThis will turn the robot a bunch of times and calculate your offsets for your tracking wheels.", measure_offsets},
+  // });
 
   // Initialize chassis and auton selector
   chassis.initialize();
-  ez::as::initialize();
+  // ez::as::initialize();
   master.rumble(chassis.drive_imu_calibrated() ? "." : "---");
 }
 
@@ -114,17 +90,22 @@ void competition_initialize() {
  * from where it left off.
  */
 void autonomous() {
-  chassis.pid_targets_reset();                // Resets PID targets to 0
-  chassis.drive_imu_reset();                  // Reset gyro position to 0
-  chassis.drive_sensor_reset();               // Reset drive sensors to 0
-  chassis.odom_xyt_set(0_in, 0_in, 0_deg);    // Set the current position, you can start at a specific position with this
-  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  // Set motors to hold.  This helps autonomous consistency
+  chassis.pid_targets_reset();    // Resets PID targets to 0
+  chassis.drive_imu_reset();      // Reset gyro position to 0
+  chassis.drive_sensor_reset();   // Reset drive sensors to 0
+
+  // Set the current position, you can start at a specific position with this
+  chassis.odom_xyt_set(0_in, 0_in, 0_deg);    
+
+  // Set motors to hold.  This helps autonomous consistency
+  chassis.drive_brake_set(MOTOR_BRAKE_HOLD);  
 
   /*
   Odometry and Pure Pursuit are not magic
 
   It is possible to get perfectly consistent results without tracking wheels,
   but it is also possible to have extremely inconsistent results without tracking wheels.
+
   When you don't use tracking wheels, you need to:
    - avoid wheel slip
    - avoid wheelies
@@ -133,7 +114,9 @@ void autonomous() {
   to be consistent
   */
 
-  ez::as::auton_selector.selected_auton_call();  // Calls selected auton from autonomous selector
+  // Calls selected auton from autonomous selector 
+  // TODO: enable this 
+  // ez::as::auton_selector.selected_auton_call();  
 }
 
 /**
@@ -141,6 +124,7 @@ void autonomous() {
  */
 void screen_print_tracker(ez::tracking_wheel *tracker, std::string name, int line) {
   std::string tracker_value = "", tracker_width = "";
+  
   // Check if the tracker exists
   if (tracker != nullptr) {
     tracker_value = name + " tracker: " + util::to_string_with_precision(tracker->get());             // Make text for the tracker value
@@ -247,8 +231,8 @@ void opcontrol() {
     // Gives you some extras to make EZ-Template ezier
     ez_template_extras();
 
-    chassis.opcontrol_tank();  // Tank control
-    // chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
+    // chassis.opcontrol_tank();  // Tank control
+    chassis.opcontrol_arcade_standard(ez::SPLIT);   // Standard split arcade
     // chassis.opcontrol_arcade_standard(ez::SINGLE);  // Standard single arcade
     // chassis.opcontrol_arcade_flipped(ez::SPLIT);    // Flipped split arcade
     // chassis.opcontrol_arcade_flipped(ez::SINGLE);   // Flipped single arcade
