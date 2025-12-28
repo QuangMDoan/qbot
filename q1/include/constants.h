@@ -1,7 +1,0 @@
-#define FRONT_LEFT_MOTOR 19 
-#define BACK_LEFT_MOTOR 20 
-
-#define FRONT_RIGHT_MOTOR -11
-#define BACK_RIGHT_MOTOR -12 
-
-#define IMU_PORT 18

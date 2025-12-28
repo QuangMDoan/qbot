@@ -1,9 +1,13 @@
-# Ports
+# This project uses 
 
-```C
-#define FRONT_LEFT_MOTOR 12 
-#define BACK_LEFT_MOTOR 11 
-#define BACK_RIGHT_MOTOR 19 
-#define FRONT_RIGHT_MOTOR 20
-#define IMU_PORT 18
+### PROS
+
+```bash
+$ pros --version => version 3.5.6
+```
+
+### EZ-Template
+
+```bash
+ version 3.2.2
 ```
