@@ -2,15 +2,9 @@
 
 ez::Drive chassis(    
     {19, 20},  
-
-    // Right Chassis Ports (negative port will reverse it!)
     {-11, -12 },  
-
     18,     
-
-     // Wheel Diameter (Remember, 4" wheels without screw holes are actually 4.125!)
     4.125, 
-
      // Wheel RPM = cartridge * (motor gear / wheel gear)
     200);  
 
@@ -43,6 +37,7 @@ void initialize() {
   // Autonomous Selector using LLEMU
   ez::as::auton_selector.autons_add({
       {"Drive\n\nDrive forward and come back", drive_example},
+      {"Tune ABS Auton\n\nTune the absolute auton", tune_abs_auton},
       // {"Turn\n\nTurn 3 times.", turn_example},
       // {"Drive and Turn\n\nDrive forward, turn, come back", drive_and_turn},
       // {"Drive and Turn\n\nSlow down during drive", wait_until_change_speed},
